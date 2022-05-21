@@ -13,23 +13,23 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     uid = models.UUIDField(primary_key=True, default=uuid4)
     email = models.EmailField(_('email address'), unique=True)
     is_active = models.BooleanField(
-        _("active"),
+        _('active'),
         default=True,
         help_text=_(
-            "Designates whether this user should be treated as active. "
-            "Unselect this instead of deleting accounts."
+            'Designates whether this user should be treated as active. '
+            'Unselect this instead of deleting accounts.'
         ),
     )
     is_staff = models.BooleanField(
-        _("staff status"),
+        _('staff status'),
         default=False,
-        help_text=_("Designates whether the user can log into this admin site."),
+        help_text=_('Designates whether the user can log into this admin site.'),
     )
     phone = models.CharField('phone number', max_length=11, blank=True)
-    first_name = models.CharField(_("first name"), max_length=64, blank=True)
-    last_name = models.CharField(_("last name"), max_length=64, blank=True)
-    created_at = models.DateTimeField(_("date joined"), default=timezone.now)
-    updated_at = models.DateTimeField("date update", default=timezone.now)
+    first_name = models.CharField(_('first name'), max_length=64, blank=True)
+    last_name = models.CharField(_('last name'), max_length=64, blank=True)
+    created_at = models.DateTimeField(_('date joined'), default=timezone.now)
+    updated_at = models.DateTimeField('date update', auto_now=True)
 
     USERNAME_FIELD = 'email'
     objects = CustomUserManager()
