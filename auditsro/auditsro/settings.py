@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'authapp.apps.AuthappConfig',
+    'mainapp.apps.MainappConfig',
 ]
 
 MIDDLEWARE = [
