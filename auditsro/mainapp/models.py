@@ -10,6 +10,9 @@ class Organization(models.Model):
     legal_address = models.CharField('Юр. адрес', max_length=255, default='')
     site_url = models.URLField()
 
+    def __str__(self):
+        return f'Organization(pk={self.pk}, naime={self.name})'
+
 
 class Company(models.Model):
     organization_id = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='companies')
@@ -21,3 +24,6 @@ class Company(models.Model):
     info = models.TextField(default='')
     info_url = models.URLField()
     users = models.ManyToManyField(get_user_model(), related_name='companies', blank=True)
+
+    def __str__(self):
+        return f'Company(pk={self.pk}, naime={self.name})'
