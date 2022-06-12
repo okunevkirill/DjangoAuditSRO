@@ -4,4 +4,4 @@
 
 [Техническое задание](./docs/technical_requirements.md)  
 [Схема взаимодействия](./docs/interaction_scheme.md)   
-[Примечания и планы](./docs/notes.md)
+[Планы по развитию](./docs/TODO.md)
