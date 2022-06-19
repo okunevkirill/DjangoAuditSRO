@@ -24,7 +24,7 @@ class NauforSpider(scrapy.Spider):
 
     def parse_register_of_members(self, response):
         """Getting links to pages with information about the organization"""
-        for link in response.css("td a::attr('href')").getall():
+        for link in response.css("div.tbl1 td a::attr('href')").getall():
             if link is None:
                 continue
             yield response.follow(
