@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from faker import Faker
 
-from mainapp.models import Company, Organization
+from mainapp.models import Company, Organization, TrackedList
 
 # ToDo Реализовать передачу аргументов в явном виде и реализовать команду через
 #  Fake-классы (скрипт не оптимизировал - не является основным функционалом).
@@ -12,7 +12,7 @@ from mainapp.models import Company, Organization
 
 NUMBER_USER = 15
 NUMBER_ORGANIZATION = 8
-NUMBER_COMPANY = 30
+NUMBER_COMPANY = 100
 
 
 class Command(BaseCommand):
@@ -64,12 +64,10 @@ class Command(BaseCommand):
         Company.objects.bulk_create(companies)
         self.stdout.write('  SRO member companies have been created...')
 
-        for item in companies:
-            random.shuffle(users)
-            subscribers = users[:random.randint(0, NUMBER_USER - 1)]
-            for _ in range(NUMBER_USER):
-                item.users.add(*subscribers)
-                item.save()
-        self.stdout.write('  Followed member companies added for users...')
+        for user in users:
+            random.shuffle(companies)
+            tracked_list = TrackedList.objects.create(user=user)
+            tracked_list.companies.add(*companies[:random.randint(0, NUMBER_COMPANY - 1)])
+        self.stdout.write('  Watchlists added...')
 
         self.stdout.write(f'[*] Script {self.__module__!r} ending')
