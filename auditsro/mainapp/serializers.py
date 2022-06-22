@@ -1,15 +1,24 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.relations import StringRelatedField
+from rest_framework.serializers import HyperlinkedModelSerializer
 
-from .models import Company, Organization
+from .models import Company, Organization, TrackedList
 
 
-class CompanySerializer(ModelSerializer):
+class CompanySerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Company
-        fields = '__all__'
+        exclude = ('is_active',)
 
 
-class OrganizationSerializer(ModelSerializer):
+class OrganizationSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Organization
-        fields = '__all__'
+        exclude = ('is_active',)
+
+
+class TrackedListSerializer(HyperlinkedModelSerializer):
+    companies = StringRelatedField(many=True)
+
+    class Meta:
+        model = TrackedList
+        fields = ('user', 'companies')

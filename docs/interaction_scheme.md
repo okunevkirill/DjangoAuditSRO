@@ -17,7 +17,8 @@ erDiagram
     TrackedList }|--o{ Company : "contains (association table)"
     TrackedList {
         integer id PK
-        integer user_id FK
+        integer user_id FK "One to One"
+        integer companies FK "Many to many"
     }
     
     Organization ||--|{ Company : contains
