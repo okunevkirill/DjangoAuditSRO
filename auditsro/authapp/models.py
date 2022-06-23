@@ -25,7 +25,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         default=False,
         help_text=_('Designates whether the user can log into this admin site.'),
     )
-    phone = models.CharField('phone number', max_length=11, blank=True)
+    phone = models.CharField('phone number', max_length=32, blank=True)
     first_name = models.CharField(_('first name'), max_length=64, blank=True)
     last_name = models.CharField(_('last name'), max_length=64, blank=True)
     created_at = models.DateTimeField(_('date joined'), default=timezone.now)
