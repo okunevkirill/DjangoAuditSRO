@@ -1,8 +1,8 @@
 # from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Company, Organization, TrackedList
-from .serializers import CompanySerializer, OrganizationSerializer, TrackedListSerializer
+from .models import Company, Organization, Watchlist
+from .serializers import CompanySerializer, OrganizationSerializer, WatchlistSerializer
 
 
 class CompanyViewSet(ModelViewSet):
@@ -15,6 +15,6 @@ class OrganizationViewSet(ModelViewSet):
     serializer_class = OrganizationSerializer
 
 
-class TrackedListViewSet(ModelViewSet):
-    queryset = TrackedList.objects.all()
-    serializer_class = TrackedListSerializer
+class WatchlistViewSet(ModelViewSet):
+    queryset = Watchlist.objects.all()
+    serializer_class = WatchlistSerializer

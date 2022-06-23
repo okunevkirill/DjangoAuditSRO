@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from faker import Faker
 
-from mainapp.models import Company, Organization, TrackedList
+from mainapp.models import Company, Organization, Watchlist
 
 # ToDo Реализовать передачу аргументов в явном виде и реализовать команду через
 #  Fake-классы (скрипт не оптимизировал - не является основным функционалом).
@@ -66,7 +66,7 @@ class Command(BaseCommand):
 
         for user in users:
             random.shuffle(companies)
-            tracked_list = TrackedList.objects.create(user=user)
+            tracked_list = Watchlist.objects.create(user=user)
             tracked_list.companies.add(*companies[:random.randint(0, NUMBER_COMPANY - 1)])
         self.stdout.write('  Watchlists added...')
 

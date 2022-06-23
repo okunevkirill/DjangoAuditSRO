@@ -19,16 +19,17 @@ from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 
 from authapp.views import CustomUserViewSet
-from mainapp.views import CompanyViewSet, OrganizationViewSet, TrackedListViewSet
+from mainapp.views import CompanyViewSet, OrganizationViewSet, WatchlistViewSet
 
 router = DefaultRouter()
 router.register(r'users', CustomUserViewSet)
 router.register(r'companies', CompanyViewSet)
 router.register(r'organizations', OrganizationViewSet)
-router.register(r'lists', TrackedListViewSet)
+router.register(r'watchlist', WatchlistViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path('api/auth/', include('rest_framework.urls')),
     re_path('^api/', include(router.urls)),
 ]

@@ -28,6 +28,6 @@ class Company(models.Model):
         return f'Company(pk={self.pk}, naime={self.name})'
 
 
-class TrackedList(models.Model):
+class Watchlist(models.Model):
     user = models.OneToOneField(get_user_model(), unique=True, null=False, db_index=True, on_delete=models.CASCADE)
     companies = models.ManyToManyField(Company, blank=True)

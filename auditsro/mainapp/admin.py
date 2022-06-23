@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Company, Organization, TrackedList
+from .models import Company, Organization, Watchlist
 
 
 @admin.register(Company)
@@ -17,7 +17,7 @@ class OrganizationAdmin(admin.ModelAdmin):
     search_fields = ('name', 'tax_number')
 
 
-@admin.register(TrackedList)
+@admin.register(Watchlist)
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user')
     list_display_links = ('pk', 'user')

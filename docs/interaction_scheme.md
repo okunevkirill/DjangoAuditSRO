@@ -1,6 +1,6 @@
 ```mermaid
 erDiagram
-    User |o--o| TrackedList : create
+    User |o--o| Watchlist : create
     User {
         integer id PK "Change to uud"
         varchar email
@@ -14,8 +14,8 @@ erDiagram
         timestamp updated_at 
     }
     
-    TrackedList }|--o{ Company : "contains (association table)"
-    TrackedList {
+    Watchlist }|--o{ Company : "contains (association table)"
+    Watchlist {
         integer id PK
         integer user_id FK "One to One"
         integer companies FK "Many to many"
