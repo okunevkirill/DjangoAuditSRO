@@ -11,7 +11,7 @@ class Organization(models.Model):
     site_url = models.URLField()
 
     def __str__(self):
-        return f'Organization(pk={self.pk}, naime={self.name})'
+        return f'Organization(pk={self.pk}, name={self.name})'
 
 
 class Company(models.Model):
@@ -25,7 +25,7 @@ class Company(models.Model):
     info_url = models.URLField()
 
     def __str__(self):
-        return f'Company(pk={self.pk}, naime={self.name})'
+        return f'Company(pk={self.pk}, name={self.name})'
 
 
 class Watchlist(models.Model):
