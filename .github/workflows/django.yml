@@ -1,9 +1,9 @@
 name: Testing django code
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 jobs:
   simple_build:
     runs-on: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
           POSTGRES_HOST: ${{ env.POSTGRES_HOST }}
           POSTGRESQL_PORT: ${{ env.POSTGRESQL_PORT }}
         run: |
-          cd myproject
+          cd auditsro
           python manage.py makemigrations
           python manage.py migrate
           python manage.py test
