@@ -1,9 +1,9 @@
 name: Testing django code
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 jobs:
   simple_build:
     runs-on: ubuntu-latest
