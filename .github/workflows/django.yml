@@ -48,7 +48,7 @@ jobs:
           POSTGRES_HOST: ${{ env.POSTGRES_HOST }}
           POSTGRESQL_PORT: ${{ env.POSTGRESQL_PORT }}
         run: |
-          cd myproject
+          cd auditsro
           python manage.py makemigrations
           python manage.py migrate
           python manage.py test
