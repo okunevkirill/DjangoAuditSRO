@@ -93,27 +93,41 @@ class CustomUserApiTestCase(APITestCase):
 class OrganizationApiTestCase(APITestCase):
     def setUp(self):
         self.BASE_URL = '/api/organizations/'
-        self.DATA_ORGANIZATION_1 = dict(
-            name='KU', tax_number='1111111111', base_tax_number='1111111111111',
-            legal_address='Planet Plyuk', site_url='https://ku.plk/')
-        self.DATA_ORGANIZATION_2 = dict(
-            name='KY', tax_number='2222222222', base_tax_number='2222222222222',
-            legal_address='Pipelac', site_url='https://ky.plk/')
-        self.CONTEXT = {'request': APIRequestFactory().get('/')}
+        self.organization_1 = Organization.objects.create(
+            name='KU',
+            tax_number='1111111111',
+            base_tax_number='1111111111111',
+            legal_address='Planet Plyuk',
+            site_url='https://ku.plk/',
+        )
+        self.organization_2 = Organization.objects.create(
+            name='KY',
+            tax_number='2222222222',
+            base_tax_number='2222222222222',
+            legal_address='Pipelac',
+            site_url='https://ky.plk/',
+        )
+        self.organization_3 = Organization.objects.create(
+            name='Mario',
+            tax_number='2223331111',
+            base_tax_number='2223333333333',
+            legal_address='Mushroom kingdom',
+            site_url='https://mario.itl/',
+        )
+        self.CONTEXT = {'request': APIRequestFactory().get(self.BASE_URL)}
 
     def test_get(self):
-        organization_1 = Organization.objects.create(**self.DATA_ORGANIZATION_1)
-        organization_2 = Organization.objects.create(**self.DATA_ORGANIZATION_2)
         response = self.client.get(self.BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        serializer_data = OrganizationSerializer([organization_1, organization_2],
-                                                 many=True, context=self.CONTEXT).data
+        serializer_data = OrganizationSerializer(
+            [self.organization_1, self.organization_2, self.organization_3],
+            many=True,
+            context=self.CONTEXT
+        ).data
         self.assertEqual(serializer_data, response.data)
 
     def test_serializer(self):
-        organization_1 = Organization.objects.create(**self.DATA_ORGANIZATION_1)
-        organization_2 = Organization.objects.create(**self.DATA_ORGANIZATION_2)
-        serializer_data = OrganizationSerializer([organization_1, organization_2],
+        serializer_data = OrganizationSerializer([self.organization_1, self.organization_2],
                                                  many=True, context=self.CONTEXT).data
         expected_data = [
             {
@@ -136,9 +150,21 @@ class OrganizationApiTestCase(APITestCase):
         self.assertEqual(expected_data, serializer_data)
 
     def test_str_to_model(self):
-        organization = Organization.objects.create(**self.DATA_ORGANIZATION_1)
-        expected_data = f"Organization(pk={organization.pk}, name={self.DATA_ORGANIZATION_1['name']})"
-        self.assertEqual(expected_data, str(organization))
+        expected_data = f"Organization(pk={self.organization_1.pk}, name=KU)"
+        self.assertEqual(expected_data, str(self.organization_1))
+
+    def test_filter(self):
+        response = self.client.get(self.BASE_URL, data={'name': 'rio'})
+        serializer_data = OrganizationSerializer([self.organization_3],
+                                                 many=True, context=self.CONTEXT).data
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(serializer_data, response.data)
+
+        response = self.client.get(self.BASE_URL, data={'tax_number': '222'})
+        serializer_data = OrganizationSerializer([self.organization_2, self.organization_3],
+                                                 many=True, context=self.CONTEXT).data
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(serializer_data, response.data)
 
     def tearDown(self):
         pass
@@ -151,28 +177,46 @@ class CompanyApiTestCase(APITestCase):
             name='KU', tax_number='1111111111', base_tax_number='1111111111111',
             legal_address='Planet Plyuk', site_url='https://ku.plk/'
         )
-        self.DATA_COMPANY_1 = dict(
-            organization_id=organization, name='Horns and hooves', tax_number='1111111111',
-            legal_address='County town N', info='Some text', info_url='http://127.0.0.1:8000/'
+        self.company_1 = Company.objects.create(
+            organization_id=organization,
+            name='Horns and hooves',
+            tax_number='1111111111',
+            legal_address='County town N',
+            info='Some text',
+            info_url='http://127.0.0.1:8000/',
         )
-        self.DATA_COMPANY_2 = dict(
-            organization_id=organization, name='Horns and hooves', tax_number='2222222222',
-            legal_address='Distant galaxy', info='Some text', info_url='https://github.com/'
+        self.company_2 = Company.objects.create(
+            organization_id=organization,
+            name='Company',
+            tax_number='2222222222',
+            legal_address='Distant galaxy',
+            info='Some text',
+            info_url='https://github.com/',
         )
         self.CONTEXT = {'request': APIRequestFactory().get('/')}
 
     def test_get(self):
-        company_1 = Company.objects.create(**self.DATA_COMPANY_1)
-        company_2 = Company.objects.create(**self.DATA_COMPANY_2)
         response = self.client.get(self.BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        serializer_data = CompanySerializer([company_1, company_2], many=True, context=self.CONTEXT).data
+        serializer_data = CompanySerializer(
+            [self.company_1, self.company_2], many=True, context=self.CONTEXT).data
         self.assertEqual(serializer_data, response.data)
 
     def test_str_to_model(self):
-        company = Company.objects.create(**self.DATA_COMPANY_1)
-        expected_data = f"Company(pk={company.pk}, name={self.DATA_COMPANY_1['name']})"
-        self.assertEqual(expected_data, str(company))
+        expected_data = f"Company(pk={self.company_1.pk}, name=Horns and hooves)"
+        self.assertEqual(expected_data, str(self.company_1))
+
+    def test_filter(self):
+        response = self.client.get(self.BASE_URL, data={'name': 'Company'})
+        serializer_data = CompanySerializer([self.company_2], many=True, context=self.CONTEXT).data
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(serializer_data, response.data)
+
+        response = self.client.get(self.BASE_URL, data={'tax_number': '111'})
+        serializer_data = CompanySerializer([self.company_1],
+                                            many=True, context=self.CONTEXT).data
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(serializer_data, response.data)
 
     def tearDown(self):
         pass
