@@ -11,16 +11,14 @@ from mainapp.serializers import OrganizationSerializer, CompanySerializer
 class CustomUserApiTestCase(APITestCase):
     def setUp(self):
         self.BASE_URL = '/api/users/'
-        self.user_1 = CustomUser.objects.create_user(
+        self.user_1 = CustomUser.objects.create_superuser(
             email='supertest@mail.com',
             password='test123456',
             first_name='SuperTest',
             last_name='SuperTest',
             phone='89271111111',
-            is_staff=True,
-            is_superuser=True,
         )
-        self.user_2 = CustomUser.objects.create(
+        self.user_2 = CustomUser.objects.create_user(
             email='test@mail.com',
             password='test123456',
             first_name='Test',
@@ -37,7 +35,12 @@ class CustomUserApiTestCase(APITestCase):
 
     def test_get(self):
         response = self.client.get(self.BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.client.force_login(self.user_1)
+        response = self.client.get(self.BASE_URL, data={'ordering': 'created_at'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         serializer_data = CustomUserSerializer([self.user_1, self.user_2, self.user_3], many=True).data
         self.assertEqual(serializer_data, response.data)
 
@@ -64,18 +67,21 @@ class CustomUserApiTestCase(APITestCase):
         self.assertEqual(expected_data, str(self.user_2))
 
     def test_filter(self):
-        response = self.client.get(self.BASE_URL, data={'email': 'test'})
+        self.client.force_login(self.user_1)
+        response = self.client.get(self.BASE_URL, data={'email': 'test', 'ordering': 'created_at'})
         serializer_data = CustomUserSerializer([self.user_1, self.user_2], many=True).data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(serializer_data, response.data)
 
     def test_search(self):
+        self.client.force_login(self.user_1)
         response = self.client.get(self.BASE_URL, data={'search': 'Nemo'})
         serializer_data = CustomUserSerializer([self.user_2, self.user_3], many=True).data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(serializer_data, response.data)
 
     def test_ordering(self):
+        self.client.force_login(self.user_1)
         response = self.client.get(self.BASE_URL, data={'ordering': 'email'})
         serializer_data = CustomUserSerializer([self.user_3, self.user_1, self.user_2], many=True).data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -93,6 +99,15 @@ class CustomUserApiTestCase(APITestCase):
 class OrganizationApiTestCase(APITestCase):
     def setUp(self):
         self.BASE_URL = '/api/organizations/'
+        self.user_1 = CustomUser.objects.create_user(
+            email='supertest@mail.com',
+            password='test123456',
+            first_name='SuperTest',
+            last_name='SuperTest',
+            phone='89271111111',
+            is_staff=True,
+            is_superuser=True,
+        )
         self.organization_1 = Organization.objects.create(
             name='KU',
             tax_number='1111111111',
@@ -117,6 +132,10 @@ class OrganizationApiTestCase(APITestCase):
         self.CONTEXT = {'request': APIRequestFactory().get(self.BASE_URL)}
 
     def test_get(self):
+        response = self.client.get(self.BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.client.force_login(self.user_1)
         response = self.client.get(self.BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         serializer_data = OrganizationSerializer(
@@ -154,6 +173,7 @@ class OrganizationApiTestCase(APITestCase):
         self.assertEqual(expected_data, str(self.organization_1))
 
     def test_filter(self):
+        self.client.force_login(self.user_1)
         response = self.client.get(self.BASE_URL, data={'name': 'rio'})
         serializer_data = OrganizationSerializer([self.organization_3],
                                                  many=True, context=self.CONTEXT).data
@@ -177,6 +197,15 @@ class CompanyApiTestCase(APITestCase):
             name='KU', tax_number='1111111111', base_tax_number='1111111111111',
             legal_address='Planet Plyuk', site_url='https://ku.plk/'
         )
+        self.user_1 = CustomUser.objects.create_user(
+            email='supertest@mail.com',
+            password='test123456',
+            first_name='SuperTest',
+            last_name='SuperTest',
+            phone='89271111111',
+            is_staff=True,
+            is_superuser=True,
+        )
         self.company_1 = Company.objects.create(
             organization_id=organization,
             name='Horns and hooves',
@@ -197,6 +226,10 @@ class CompanyApiTestCase(APITestCase):
 
     def test_get(self):
         response = self.client.get(self.BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.client.force_login(self.user_1)
+        response = self.client.get(self.BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         serializer_data = CompanySerializer(
             [self.company_1, self.company_2], many=True, context=self.CONTEXT).data
@@ -207,6 +240,7 @@ class CompanyApiTestCase(APITestCase):
         self.assertEqual(expected_data, str(self.company_1))
 
     def test_filter(self):
+        self.client.force_login(self.user_1)
         response = self.client.get(self.BASE_URL, data={'name': 'Company'})
         serializer_data = CompanySerializer([self.company_2], many=True, context=self.CONTEXT).data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
